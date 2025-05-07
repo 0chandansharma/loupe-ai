@@ -1,5 +1,6 @@
+// src/components/LoadingOverlay.js
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator, Text, Platform } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
@@ -29,17 +30,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   message: {
     marginTop: 16,

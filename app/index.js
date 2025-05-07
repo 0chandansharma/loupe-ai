@@ -1,18 +1,18 @@
-// src/screens/CameraScreen.js - Updated with history navigation
+// app/index.js
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, StatusBar } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { captureImage, pickImageFromGallery } from '../store/actions/imageActions';
-import { checkPermissions } from '../utils/permissions';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import colors from '../styles/colors';
-import fonts from '../styles/fonts';
-import CameraView from '../components/CameraView';
-import GalleryPicker from '../components/GalleryPicker';
-import LoadingOverlay from '../components/LoadingOverlay';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { captureImage, pickImageFromGallery } from '../src/store/actions/imageActions';
+import { checkPermissions } from '../src/utils/permissions';
+import colors from '../src/styles/colors';
+import fonts from '../src/styles/fonts';
+import CameraView from '../src/components/CameraView';
+import LoadingOverlay from '../src/components/LoadingOverlay';
 
-const CameraScreen = ({ navigation }) => {
+export default function HomeScreen() {
   const [showGallery, setShowGallery] = useState(false);
   const [permissionsGranted, setPermissionsGranted] = useState(false);
   
@@ -24,16 +24,6 @@ const CameraScreen = ({ navigation }) => {
     const requestPermissions = async () => {
       const permissions = await checkPermissions();
       setPermissionsGranted(permissions.camera && permissions.mediaLibrary);
-      
-      if (!permissions.camera || !permissions.mediaLibrary) {
-        Alert.alert(
-          'Permissions Required',
-          'Camera and media library permissions are required to use this app.',
-          [
-            { text: 'OK' }
-          ]
-        );
-      }
     };
     
     requestPermissions();
@@ -41,38 +31,27 @@ const CameraScreen = ({ navigation }) => {
   
   const handleCapture = async (imageUri) => {
     if (imageUri) {
-      navigation.navigate('Result', { imageUri });
+      router.push({
+        pathname: '/result',
+        params: { imageUri }
+      });
     }
   };
   
   const handlePickImage = async () => {
     const result = await dispatch(pickImageFromGallery());
     if (result) {
-      navigation.navigate('Result', { imageUri: result.uri });
+      router.push({
+        pathname: '/result',
+        params: { imageUri: result.uri }
+      });
     }
   };
   
   const handleGalleryPress = () => {
     setShowGallery(true);
+    handlePickImage();
   };
-  
-  const handleGalleryPickerClose = () => {
-    setShowGallery(false);
-  };
-  
-  const handleGallerySelection = (imageUri) => {
-    setShowGallery(false);
-    navigation.navigate('Result', { imageUri });
-  };
-  
-  if (showGallery) {
-    return (
-      <GalleryPicker
-        onSelectImage={handleGallerySelection}
-        onClose={handleGalleryPickerClose}
-      />
-    );
-  }
   
   return (
     <View style={styles.container}>
@@ -84,14 +63,14 @@ const CameraScreen = ({ navigation }) => {
         <View style={styles.headerButtons}>
           <TouchableOpacity
             style={styles.headerButton}
-            onPress={() => navigation.navigate('History')}
+            onPress={() => router.push('/history')}
           >
             <Ionicons name="time-outline" size={24} color={colors.surface} />
           </TouchableOpacity>
           
           <TouchableOpacity
             style={styles.headerButton}
-            onPress={() => navigation.navigate('Profile')}
+            onPress={() => router.push('/profile')}
           >
             <Ionicons name="person-circle" size={28} color={colors.surface} />
           </TouchableOpacity>
@@ -113,7 +92,7 @@ const CameraScreen = ({ navigation }) => {
       {loading && <LoadingOverlay message="Processing..." />}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -155,5 +134,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-export default CameraScreen;

@@ -1,3 +1,4 @@
+// src/components/ResultCard.js
 import React from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import colors from '../styles/colors';
@@ -22,17 +23,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 16,
     margin: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   scrollContent: {
     padding: 16,

@@ -1,3 +1,4 @@
+// src/components/CameraView.js
 import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';

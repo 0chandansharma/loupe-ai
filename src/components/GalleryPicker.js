@@ -1,41 +1,72 @@
+// src/components/GalleryPicker.js - Updated with mock medical images
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image, FlatList } from 'react-native';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
 const GalleryPicker = ({ onSelectImage, onClose }) => {
-  // In real app, fetch recent images from device gallery
-  // For demo, we're showing placeholder images
-  
-  const placeholderImages = [
-    { id: '1', uri: 'https://via.placeholder.com/150' },
-    { id: '2', uri: 'https://via.placeholder.com/150' },
-    { id: '3', uri: 'https://via.placeholder.com/150' },
-    { id: '4', uri: 'https://via.placeholder.com/150' },
-    { id: '5', uri: 'https://via.placeholder.com/150' },
-    { id: '6', uri: 'https://via.placeholder.com/150' },
+  // Mock images for testing
+  const mockImages = [
+    { 
+      id: '1', 
+      uri: 'https://www.healthimaging.com/sites/default/files/styles/media_image/public/mammogram.jpg?itok=a99pfmYN',
+      type: 'Mammogram' 
+    },
+    { 
+      id: '2', 
+      uri: 'https://www.researchgate.net/publication/344398848/figure/fig1/AS:941206534447106@1601482962831/A-sample-of-chest-X-ray-images-from-the-NIH-Chest-X-ray-dataset-14.png',
+      type: 'Chest X-Ray' 
+    },
+    { 
+      id: '3', 
+      uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_10nK3yJw8QQccKRQcA6tDy7ZXmjnOkToOg&usqp=CAU',
+      type: 'Blood Report' 
+    },
+    { 
+      id: '4', 
+      uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZHXvRExJUMPx7vdAb74jIKY1O8GTQM93kbQ&usqp=CAU',
+      type: 'CT Scan' 
+    },
+    { 
+      id: '5', 
+      uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNZZvEZYjN6CezXxwkv8ZX3FDOz-EfmYTvl8ybYGJXDIBLRbVQ9ioA5jXGn_ECFNL9nIw&usqp=CAU',
+      type: 'MRI' 
+    },
+    { 
+      id: '6', 
+      uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4YeXCkHqR48sMBqvyWw0LWQwtpE-XH0tqcQ&usqp=CAU',
+      type: 'Ultrasound'
+    },
   ];
+  
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.imageWrapper}
+      onPress={() => onSelectImage(item.uri)}
+    >
+      <Image source={{ uri: item.uri }} style={styles.image} />
+      <View style={styles.imageTypeContainer}>
+        <Text style={styles.imageTypeText}>{item.type}</Text>
+      </View>
+    </TouchableOpacity>
+  );
   
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Select Image</Text>
+        <Text style={styles.title}>Select Medical Report</Text>
         <TouchableOpacity onPress={onClose}>
           <Text style={styles.closeText}>Close</Text>
         </TouchableOpacity>
       </View>
       
-      <View style={styles.imagesContainer}>
-        {placeholderImages.map((image) => (
-          <TouchableOpacity
-            key={image.id}
-            style={styles.imageWrapper}
-            onPress={() => onSelectImage(image.uri)}
-          >
-            <Image source={{ uri: image.uri }} style={styles.image} />
-          </TouchableOpacity>
-        ))}
-      </View>
+      <FlatList
+        data={mockImages}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.imagesContainer}
+      />
     </View>
   );
 };
@@ -63,19 +94,31 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   imagesContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 4,
+    padding: 8,
   },
   imageWrapper: {
-    width: '33.33%',
-    padding: 4,
+    width: '50%',
+    padding: 8,
+    position: 'relative',
   },
   image: {
     width: '100%',
     aspectRatio: 1,
+    borderRadius: 8,
+  },
+  imageTypeContainer: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 4,
     borderRadius: 4,
+  },
+  imageTypeText: {
+    color: colors.surface,
+    fontSize: fonts.sizes.small,
+    textAlign: 'center',
   },
 });
 

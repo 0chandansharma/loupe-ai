@@ -25,8 +25,5 @@ function App() {
   );
 }
 
-// Register the root component
-registerRootComponent(App);
-
 // Export for potential imports in other files
 export default App;

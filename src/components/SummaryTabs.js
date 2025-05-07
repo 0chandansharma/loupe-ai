@@ -1,3 +1,4 @@
+// src/components/SummaryTabs.js
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Animated } from 'react-native';
 import colors from '../styles/colors';

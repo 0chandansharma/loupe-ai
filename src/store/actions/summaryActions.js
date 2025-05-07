@@ -1,3 +1,4 @@
+// src/store/actions/summaryActions.js
 import { processMedicalReport } from '../../api/medicalApi';
 
 export const generateSummary = (imageUri) => async (dispatch) => {
@@ -8,7 +9,10 @@ export const generateSummary = (imageUri) => async (dispatch) => {
     
     dispatch({
       type: 'SUMMARY_SUCCESS',
-      payload: summaryResponse,
+      payload: {
+        english: summaryResponse.English_Summary,
+        hindi: summaryResponse.Hindi_Summary,
+      },
     });
     
     return summaryResponse;
