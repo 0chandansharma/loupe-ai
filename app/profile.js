@@ -1,14 +1,6 @@
 // app/profile.js
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -101,22 +93,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
         
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Support</Text>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="help-circle-outline" size={22} color={colors.primary} />
-            <Text style={styles.menuText}>Help & Support</Text>
-            <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="information-circle-outline" size={22} color={colors.primary} />
-            <Text style={styles.menuText}>About</Text>
-            <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
-          </TouchableOpacity>
-        </View>
-        
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={22} color={colors.error} />
           <Text style={styles.logoutText}>Logout</Text>
@@ -169,17 +145,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: fonts.sizes.medium,
@@ -210,17 +180,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     padding: 16,
     borderRadius: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   logoutText: {
     marginLeft: 8,

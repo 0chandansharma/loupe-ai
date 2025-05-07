@@ -1,24 +1,20 @@
 // app/history.js
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import { router } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { fetchHistory, deleteFromHistory, clearHistory } from '../src/store/actions/historyActions';
 import colors from '../src/styles/colors';
 import fonts from '../src/styles/fonts';
 import Header from '../src/components/Header';
 
 export default function HistoryScreen() {
   const [refreshing, setRefreshing] = useState(false);
-  const [items, setItems] = useState([]);
+  
+  const dispatch = useDispatch();
+  const { items, loading } = useSelector((state) => state.history);
   const insets = useSafeAreaInsets();
   
   useEffect(() => {
@@ -26,21 +22,7 @@ export default function HistoryScreen() {
   }, []);
   
   const loadHistory = async () => {
-    // Mock history data
-    setItems([
-      {
-        id: '1',
-        imageUri: 'https://www.healthimaging.com/sites/default/files/styles/media_image/public/mammogram.jpg?itok=a99pfmYN',
-        summaryEnglish: 'The mammography report indicates an abnormality in the left breast.',
-        timestamp: Date.now() - 86400000, // 1 day ago
-      },
-      {
-        id: '2',
-        imageUri: 'https://www.researchgate.net/publication/344398848/figure/fig1/AS:941206534447106@1601482962831/A-sample-of-chest-X-ray-images-from-the-NIH-Chest-X-ray-dataset-14.png',
-        summaryEnglish: 'The chest X-ray reveals clear lung fields bilaterally with no evidence of consolidation.',
-        timestamp: Date.now() - 172800000, // 2 days ago
-      },
-    ]);
+    dispatch(fetchHistory());
   };
   
   const handleRefresh = async () => {
@@ -68,7 +50,7 @@ export default function HistoryScreen() {
         { 
           text: 'Delete', 
           style: 'destructive',
-          onPress: () => setItems(items.filter(item => item.id !== itemId))
+          onPress: () => dispatch(deleteFromHistory(itemId))
         }
       ]
     );
@@ -127,7 +109,7 @@ export default function HistoryScreen() {
               { 
                 text: 'Clear', 
                 style: 'destructive',
-                onPress: () => setItems([])
+                onPress: () => dispatch(clearHistory())
               }
             ]
           )
@@ -170,17 +152,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 16,
     padding: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   thumbnail: {
     width: 70,

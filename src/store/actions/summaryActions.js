@@ -9,10 +9,7 @@ export const generateSummary = (imageUri) => async (dispatch) => {
     
     dispatch({
       type: 'SUMMARY_SUCCESS',
-      payload: {
-        english: summaryResponse.English_Summary,
-        hindi: summaryResponse.Hindi_Summary,
-      },
+      payload: summaryResponse,
     });
     
     return summaryResponse;

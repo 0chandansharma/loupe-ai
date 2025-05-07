@@ -1,106 +1,84 @@
-// src/components/CameraView.js
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
-import { Camera } from 'expo-camera';
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import colors from '../styles/colors';
-
-const { width } = Dimensions.get('window');
-const FRAME_SIZE = width * 0.8;
 
 const CameraView = ({ onCapture, onClose, onGalleryPress }) => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
-  const cameraRef = useRef(null);
+  const [capturedImage, setCapturedImage] = React.useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
 
-  const handleCapture = async () => {
-    if (cameraRef.current) {
-      try {
-        const photo = await cameraRef.current.takePictureAsync({
-          quality: 0.8,
-          skipProcessing: false,
-        });
-        onCapture(photo.uri);
-      } catch (error) {
-        console.error('Camera capture error:', error);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setCapturedImage(result.assets[0].uri);
+        
+        // Also notify parent component
+        onCapture(result.assets[0].uri);
       }
+    } catch (error) {
+      console.error('Error picking image:', error);
     }
   };
 
-  const toggleFlash = () => {
-    setFlash(
-      flash === Camera.Constants.FlashMode.off
-        ? Camera.Constants.FlashMode.on
-        : Camera.Constants.FlashMode.off
-    );
+  const takePicture = async () => {
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setCapturedImage(result.assets[0].uri);
+        
+        // Also notify parent component
+        onCapture(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error taking picture:', error);
+    }
   };
-
-  if (hasPermission === null) {
-    return <View style={styles.container} />;
-  }
-
-  if (hasPermission === false) {
-    return (
-      <View style={[styles.container, styles.centerContent]}>
-        <Text style={styles.errorText}>No access to camera</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
-      <Camera
-        ref={cameraRef}
-        style={styles.camera}
-        type={type}
-        flashMode={flash}
-        ratio="4:3"
-      >
-        <View style={styles.overlay}>
-          <View style={styles.topControls}>
-            <TouchableOpacity style={styles.controlButton} onPress={onClose}>
-              <Ionicons name="arrow-back" size={24} color="white" />
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.controlButton} onPress={toggleFlash}>
-              <Ionicons
-                name={flash === Camera.Constants.FlashMode.off ? 'flash-off' : 'flash'}
-                size={24}
-                color="white"
-              />
-            </TouchableOpacity>
-          </View>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onClose} style={styles.headerButton}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Capture Document</Text>
+        <View style={styles.headerButton} />
+      </View>
 
-          <View style={styles.frameContainer}>
-            <View style={styles.frame}>
-              <View style={[styles.corner, styles.topLeftCorner]} />
-              <View style={[styles.corner, styles.topRightCorner]} />
-              <View style={[styles.corner, styles.bottomLeftCorner]} />
-              <View style={[styles.corner, styles.bottomRightCorner]} />
-            </View>
-          </View>
-
-          <View style={styles.bottomControls}>
-            <TouchableOpacity style={styles.galleryButton} onPress={onGalleryPress}>
-              <Ionicons name="images" size={28} color="white" />
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.captureButton} onPress={handleCapture}>
-              <View style={styles.captureButtonInner} />
-            </TouchableOpacity>
-            
-            <View style={styles.galleryButton} />
-          </View>
+      {capturedImage ? (
+        <View style={styles.previewContainer}>
+          <Image source={{ uri: capturedImage }} style={styles.previewImage} />
+          <TouchableOpacity style={styles.retakeButton} onPress={() => setCapturedImage(null)}>
+            <Text style={styles.buttonText}>Retake</Text>
+          </TouchableOpacity>
         </View>
-      </Camera>
+      ) : (
+        <View style={styles.actionContainer}>
+          <Text style={styles.instruction}>
+            Capture medical document for analysis
+          </Text>
+          
+          <TouchableOpacity style={styles.actionButton} onPress={takePicture}>
+            <Ionicons name="camera" size={32} color="white" />
+            <Text style={styles.buttonText}>Take Photo</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.actionButton} onPress={pickImage}>
+            <Ionicons name="images" size={32} color="white" />
+            <Text style={styles.buttonText}>Choose from Gallery</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -108,108 +86,70 @@ const CameraView = ({ onCapture, onClose, onGalleryPress }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
   },
-  centerContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: colors.error,
-    fontSize: 16,
-  },
-  camera: {
-    flex: 1,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'space-between',
-  },
-  topControls: {
+  header: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    backgroundColor: '#2A6CBF',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
-  controlButton: {
+  headerButton: {
     width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
     alignItems: 'center',
   },
-  frameContainer: {
+  headerTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  actionContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  instruction: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 40,
+  },
+  actionButton: {
+    backgroundColor: '#2A6CBF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+    marginVertical: 10,
+    width: '80%',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    marginLeft: 12,
+    fontWeight: '500',
+  },
+  previewContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  frame: {
-    width: FRAME_SIZE,
-    height: FRAME_SIZE,
-    position: 'relative',
+  previewImage: {
+    width: '90%',
+    height: '70%',
+    resizeMode: 'contain',
   },
-  corner: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    borderColor: 'white',
-    borderWidth: 3,
-  },
-  topLeftCorner: {
-    top: 0,
-    left: 0,
-    borderBottomWidth: 0,
-    borderRightWidth: 0,
-    borderTopLeftRadius: 12,
-  },
-  topRightCorner: {
-    top: 0,
-    right: 0,
-    borderBottomWidth: 0,
-    borderLeftWidth: 0,
-    borderTopRightRadius: 12,
-  },
-  bottomLeftCorner: {
-    bottom: 0,
-    left: 0,
-    borderTopWidth: 0,
-    borderRightWidth: 0,
-    borderBottomLeftRadius: 12,
-  },
-  bottomRightCorner: {
-    bottom: 0,
-    right: 0,
-    borderTopWidth: 0,
-    borderLeftWidth: 0,
-    borderBottomRightRadius: 12,
-  },
-  bottomControls: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 30,
-  },
-  galleryButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureButton: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureButtonInner: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'white',
+  retakeButton: {
+    backgroundColor: '#2A6CBF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginTop: 20,
   },
 });
 

@@ -1,12 +1,12 @@
 // src/components/SummaryTabs.js
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Animated } from 'react-native';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
 const SummaryTabs = ({ activeTab, onTabChange }) => {
   // Animation values
-  const [indicatorPosition] = useState(new Animated.Value(0));
+  const [indicatorPosition] = React.useState(new Animated.Value(0));
   
   // Animate the indicator when tab changes
   React.useEffect(() => {

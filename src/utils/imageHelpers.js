@@ -1,12 +1,9 @@
-// src/utils/imageHelpers.js - Enhanced for OCR-friendly images
+// src/utils/imageHelpers.js
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 export const optimizeImageForOCR = async (imageUri) => {
   try {
-    // Get image info
-    const fileInfo = await FileSystem.getInfoAsync(imageUri);
-    
     // Always optimize for OCR regardless of size
     const manipResult = await ImageManipulator.manipulateAsync(
       imageUri,
@@ -39,30 +36,6 @@ export const createThumbnail = async (imageUri) => {
     return thumbnail.uri;
   } catch (error) {
     console.error('Thumbnail creation error:', error);
-    return null;
-  }
-};
-
-// Add a function to save processed images
-export const saveProcessedImage = async (imageUri, filename) => {
-  try {
-    const directory = `${FileSystem.documentDirectory}processed_images/`;
-    
-    // Ensure directory exists
-    const dirInfo = await FileSystem.getInfoAsync(directory);
-    if (!dirInfo.exists) {
-      await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
-    }
-    
-    const newUri = `${directory}${filename}`;
-    await FileSystem.copyAsync({
-      from: imageUri,
-      to: newUri
-    });
-    
-    return newUri;
-  } catch (error) {
-    console.error('Error saving processed image:', error);
     return null;
   }
 };

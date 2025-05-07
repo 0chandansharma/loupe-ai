@@ -13,7 +13,6 @@ import CameraView from '../src/components/CameraView';
 import LoadingOverlay from '../src/components/LoadingOverlay';
 
 export default function HomeScreen() {
-  const [showGallery, setShowGallery] = useState(false);
   const [permissionsGranted, setPermissionsGranted] = useState(false);
   
   const dispatch = useDispatch();
@@ -48,11 +47,6 @@ export default function HomeScreen() {
     }
   };
   
-  const handleGalleryPress = () => {
-    setShowGallery(true);
-    handlePickImage();
-  };
-  
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.primaryDark} />
@@ -80,7 +74,7 @@ export default function HomeScreen() {
       <CameraView
         onCapture={handleCapture}
         onClose={() => {}}
-        onGalleryPress={handleGalleryPress}
+        onGalleryPress={handlePickImage}
       />
       
       <View style={styles.footer}>

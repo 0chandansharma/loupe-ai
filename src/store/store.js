@@ -1,12 +1,21 @@
 // src/store/store.js
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { thunk } from 'redux-thunk';
-import rootReducer from './reducers';
+import authReducer from './reducers/authReducer';
+import imageReducer from './reducers/imageReducer';
+import summaryReducer from './reducers/summaryReducer';
+import historyReducer from './reducers/historyReducer';
 
-const middleware = [thunk];
+const rootReducer = combineReducers({
+  auth: authReducer,
+  image: imageReducer,
+  summary: summaryReducer,
+  history: historyReducer,
+});
+
 const store = createStore(
   rootReducer,
-  applyMiddleware(...middleware)
+  applyMiddleware(thunk)
 );
 
 export default store;
