@@ -4,6 +4,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get started
 
+torun
+npx expo start --clear
+
+
 1. Install dependencies
 
    ```bash
