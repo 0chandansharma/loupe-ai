@@ -31,7 +31,7 @@ export default function HomeScreen() {
   const handleCapture = async (imageUri) => {
     if (imageUri) {
       router.push({
-        pathname: '/result',
+        pathname: '/results',
         params: { imageUri }
       });
     }
@@ -41,7 +41,7 @@ export default function HomeScreen() {
     const result = await dispatch(pickImageFromGallery());
     if (result) {
       router.push({
-        pathname: '/result',
+        pathname: '/results',
         params: { imageUri: result.uri }
       });
     }
